@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xindex — Tokenized Baskets Whitepaper</title>
+  <style>
+    @font-face {
+      font-family: "Geist Pixel Circle";
+      src: url("../public/fonts/GeistPixel-Circle.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    :root {
+      --ink: #101116;
+      --muted: #5b626d;
+      --paper: #f5f7fa;
+      --white: #ffffff;
+      --line: #dfe4ea;
+      --green: #0da678;
+      --green-dark: #075b49;
+      --blue: #3479ed;
+      --gold: #c9820a;
+      --violet: #7154cc;
+      --soft-green: #e3f5ef;
+      --soft-blue: #e8effe;
+      --soft-gold: #fff2d9;
+      --soft-violet: #eeeaff;
+    }
+
+    * { box-sizing: border-box; }
+    @page {
+      size: A4;
+      margin: 17mm 17mm 18mm;
+      @bottom-left {
+        content: "XINDEX / CONCEPT PAPER";
+        color: #858d98;
+        font-family: Arial, sans-serif;
+        font-size: 7.5pt;
+        letter-spacing: 0.12em;
+      }
+      @bottom-right {
+        content: counter(page, decimal-leading-zero);
+        color: #858d98;
+        font-family: Arial, sans-serif;
+        font-size: 8pt;
+        font-weight: 700;
+      }
+    }
+    @page cover {
+      margin: 0;
+      @bottom-left { content: none; }
+      @bottom-right { content: none; }
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+    }
+
+    body {
+      counter-reset: page;
+    }
+
+    .page {
+      position: relative;
+      min-height: 255mm;
+      page-break-before: always;
+      padding: 1mm 0 5mm;
+    }
+
+    .cover {
+      page: cover;
+      page-break-before: auto;
+      min-height: 297mm;
+      padding: 20mm 20mm 18mm;
+      color: #ffffff;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 76% 20%, rgba(29, 221, 161, 0.23), transparent 24%),
+        radial-gradient(circle at 18% 72%, rgba(52, 121, 237, 0.32), transparent 27%),
+        linear-gradient(145deg, #090b11 0%, #111722 47%, #062b27 100%);
+    }
+
+    .cover::before,
+    .cover::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,0.11);
+      transform: rotate(28deg);
+      pointer-events: none;
+    }
+    .cover::before { width: 180mm; height: 180mm; top: -80mm; right: -60mm; border-radius: 42%; }
+    .cover::after { width: 120mm; height: 120mm; bottom: -48mm; left: -55mm; border-radius: 45%; }
+
+    .cover-inner { position: relative; z-index: 1; min-height: 259mm; display: flex; flex-direction: column; }
+    .brand-row { display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-transform: uppercase; font-size: 10pt; letter-spacing: 0.18em; font-weight: 700; }
+    .brand img { width: 30px; height: 30px; border-radius: 50%; background: #fff; }
+    .cover-meta { color: rgba(255,255,255,0.6); font-size: 8pt; text-transform: uppercase; letter-spacing: 0.16em; }
+    .cover-body { margin-top: 62mm; max-width: 155mm; }
+    .eyebrow { color: var(--green); font-size: 8pt; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+    .cover h1 { margin: 10mm 0 8mm; font-family: "Geist Pixel Circle", monospace; font-size: 41pt; line-height: 1.05; letter-spacing: -0.055em; text-transform: uppercase; font-weight: 400; }
+    .cover-lead { max-width: 125mm; color: rgba(255,255,255,0.78); font-size: 15pt; line-height: 1.45; }
+    .cover-callout { margin-top: 19mm; display: flex; gap: 7mm; align-items: stretch; max-width: 155mm; }
+    .cover-callout .callout-main { flex: 1; border-left: 2px solid var(--green); padding-left: 6mm; font-size: 18pt; line-height: 1.28; font-weight: 700; }
+    .cover-callout .callout-side { width: 43mm; padding: 4mm 0 0 5mm; border-left: 1px solid rgba(255,255,255,0.16); color: rgba(255,255,255,0.58); font-size: 8pt; line-height: 1.5; text-transform: uppercase; letter-spacing: 0.08em; }
+    .cover-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; color: rgba(255,255,255,0.54); font-size: 8pt; }
+    .cover-footer strong { color: #fff; display: block; font-size: 10pt; margin-bottom: 2mm; }
+    .cover-signal { display: flex; gap: 2mm; align-items: center; }
+    .signal-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(13,166,120,0.14); }
+
+    h2, h3, h4, p { margin-top: 0; }
+    h2 { font-family: "Geist Pixel Circle", monospace; font-size: 28pt; line-height: 1.12; letter-spacing: -0.045em; text-transform: uppercase; font-weight: 400; margin-bottom: 5mm; }
+    h3 { font-size: 17pt; line-height: 1.2; letter-spacing: -0.025em; margin-bottom: 3mm; }
+    h4 { font-size: 9pt; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green-dark); margin-bottom: 2mm; }
+    .kicker { color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.16em; font-size: 8pt; font-weight: 700; margin-bottom: 4mm; }
+    .lede { color: var(--muted); font-size: 13pt; line-height: 1.48; max-width: 150mm; margin-bottom: 8mm; }
+    .small { color: var(--muted); font-size: 8.5pt; line-height: 1.5; }
+    .tiny { color: #77808c; font-size: 7.5pt; line-height: 1.45; }
+    .rule { height: 1px; background: var(--line); margin: 6mm 0; }
+    .rule-dark { height: 1px; background: rgba(255,255,255,0.17); margin: 6mm 0; }
+
+    .masthead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12mm; border-bottom: 1px solid var(--line); padding-bottom: 6mm; margin-bottom: 8mm; }
+    .masthead .doc-id { text-align: right; color: #78818c; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.6; }
+    .masthead .doc-id strong { color: var(--ink); display: block; font-size: 10pt; }
+
+    .toc-grid { display: flex; flex-wrap: wrap; gap: 3mm; margin-top: 8mm; }
+    .toc-item { width: calc(50% - 1.5mm); display: flex; gap: 4mm; align-items: baseline; padding: 4mm 0; border-bottom: 1px solid var(--line); }
+    .toc-num { color: var(--green); font-family: "Geist Pixel Circle", monospace; font-size: 15pt; }
+    .toc-title { font-weight: 700; }
+    .toc-caption { display: block; color: var(--muted); font-size: 8.5pt; margin-top: 1mm; }
+    .principles { display: flex; gap: 4mm; margin-top: 13mm; }
+    .principle { flex: 1; padding: 5mm; background: var(--white); border: 1px solid var(--line); border-radius: 4mm; }
+    .principle .number { color: var(--green); font-family: "Geist Pixel Circle", monospace; font-size: 18pt; }
+    .principle h4 { color: var(--ink); margin: 2mm 0; letter-spacing: 0.06em; }
+
+    .split { display: flex; gap: 9mm; align-items: flex-start; }
+    .split > .main { flex: 1.45; }
+    .split > .side { flex: 0.85; }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: 4mm; padding: 6mm; }
+    .dark-card { color: #fff; background: #121821; border: 1px solid #283443; border-radius: 4mm; padding: 7mm; }
+    .green-card { background: var(--soft-green); border: 1px solid #b7e8d9; border-radius: 4mm; padding: 6mm; }
+    .blue-card { background: var(--soft-blue); border: 1px solid #c8d9fa; border-radius: 4mm; padding: 6mm; }
+    .gold-card { background: var(--soft-gold); border: 1px solid #f0d7a5; border-radius: 4mm; padding: 6mm; }
+    .violet-card { background: var(--soft-violet); border: 1px solid #d5caf7; border-radius: 4mm; padding: 6mm; }
+
+    .metric-row { display: flex; gap: 4mm; margin: 7mm 0; }
+    .metric { flex: 1; padding: 5mm; background: var(--white); border: 1px solid var(--line); border-radius: 3mm; }
+    .metric strong { display: block; font-family: "Geist Pixel Circle", monospace; font-size: 22pt; line-height: 1; margin-bottom: 2mm; }
+    .metric span { color: var(--muted); font-size: 8pt; }
+    .quote { padding: 7mm 8mm; margin: 7mm 0; border-left: 3px solid var(--green); background: var(--white); font-size: 17pt; line-height: 1.35; font-weight: 700; letter-spacing: -0.02em; }
+    .quote em { font-style: normal; color: var(--green-dark); }
+
+    .flow { display: flex; align-items: stretch; gap: 3mm; margin: 8mm 0; }
+    .flow-step { flex: 1; min-height: 38mm; padding: 5mm; background: var(--white); border: 1px solid var(--line); border-radius: 3mm; }
+    .flow-step .step-num { color: var(--green); font-family: "Geist Pixel Circle", monospace; font-size: 17pt; }
+    .flow-arrow { align-self: center; color: var(--green); font-size: 16pt; }
+    .flow-step strong { display: block; margin: 2mm 0; }
+    .flow-step span { display: block; color: var(--muted); font-size: 8.5pt; line-height: 1.45; }
+
+    .basket-head { display: flex; align-items: center; justify-content: space-between; gap: 5mm; margin-bottom: 4mm; }
+    .basket-symbol { color: #fff; background: var(--green-dark); padding: 2mm 3mm; border-radius: 2mm; font-weight: 700; letter-spacing: 0.04em; }
+    .basket-symbol.blue { background: #285db8; }
+    .basket-symbol.gold { color: #4e3204; background: #e7b34e; }
+    .basket-name { font-weight: 700; font-size: 13pt; }
+    .basket-sub { color: var(--muted); font-size: 8.5pt; }
+    .logo-rail { display: flex; gap: 2mm; margin: 5mm 0; }
+    .logo-rail span { width: 10mm; height: 10mm; display: grid; place-items: center; border-radius: 50%; background: #fff; border: 1px solid var(--line); }
+    .logo-rail img { width: 6.5mm; height: 6.5mm; object-fit: contain; }
+    .allocation { width: 100%; border-collapse: collapse; margin-top: 4mm; font-size: 8.5pt; }
+    .allocation th { color: #7a838f; text-transform: uppercase; letter-spacing: 0.1em; font-size: 7pt; text-align: left; padding: 2mm 0; border-bottom: 1px solid var(--line); }
+    .allocation td { padding: 2.5mm 0; border-bottom: 1px solid #edf0f3; }
+    .allocation td:last-child, .allocation th:last-child { text-align: right; }
+    .weight { color: var(--green-dark); font-weight: 700; }
+
+    .three-baskets { display: flex; gap: 4mm; align-items: stretch; margin-top: 7mm; }
+    .three-baskets > div { flex: 1; }
+    .future-strip { margin-top: 5mm; padding: 4mm 5mm; color: #5f51a0; background: var(--soft-violet); border: 1px dashed #cbbff3; border-radius: 3mm; font-size: 8.5pt; }
+
+    .terminal { background: #111820; color: #fff; border-radius: 5mm; padding: 7mm; margin-top: 7mm; }
+    .terminal-top { display: flex; justify-content: space-between; border-bottom: 1px solid #2d3948; padding-bottom: 4mm; margin-bottom: 5mm; }
+    .terminal-label { color: #7d8997; text-transform: uppercase; letter-spacing: 0.14em; font-size: 7pt; }
+    .terminal-status { color: #64dfb8; font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.1em; }
+    .terminal-flow { display: flex; gap: 4mm; align-items: center; }
+    .terminal-box { flex: 1; border: 1px solid #374554; border-radius: 3mm; padding: 5mm; background: #18212c; }
+    .terminal-box .amount { font-family: "Geist Pixel Circle", monospace; font-size: 21pt; }
+    .terminal-box .unit { color: #aeb9c5; font-size: 8pt; }
+    .terminal-arrow { color: var(--green); font-size: 18pt; }
+    .fee-line { display: flex; justify-content: space-between; gap: 4mm; border-top: 1px solid #2d3948; margin-top: 5mm; padding-top: 4mm; color: #aeb9c5; font-size: 8pt; }
+
+    .pair-console { background: #111820; color: #fff; border-radius: 5mm; padding: 7mm; margin-top: 7mm; }
+    .pair-visual { display: flex; gap: 4mm; align-items: center; }
+    .pair-box { flex: 1; padding: 7mm 5mm; text-align: center; border: 1px solid #344254; background: #19212c; border-radius: 3mm; }
+    .pair-box.accent { border-color: #1b9b78; background: #0f302b; }
+    .pair-box .token { font-family: "Geist Pixel Circle", monospace; font-size: 17pt; }
+    .pair-link { width: 35mm; text-align: center; color: #8c99a9; font-size: 7.5pt; }
+    .pair-link strong { display: block; color: var(--green); font-size: 16pt; margin-bottom: 1mm; }
+
+    .rail { display: flex; gap: 4mm; align-items: stretch; margin-top: 7mm; }
+    .rail-step { flex: 1; border-top: 3px solid var(--green); padding: 5mm; background: var(--white); border: 1px solid var(--line); border-top-width: 3px; border-radius: 0 0 3mm 3mm; }
+    .rail-step:nth-child(2) { border-top-color: var(--blue); }
+    .rail-step:nth-child(3) { border-top-color: var(--gold); }
+    .rail-step strong { display: block; margin-bottom: 2mm; }
+
+    .check-list { list-style: none; padding: 0; margin: 4mm 0 0; }
+    .check-list li { position: relative; padding-left: 6mm; margin: 3mm 0; }
+    .check-list li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .risk-list { list-style: none; padding: 0; margin: 0; }
+    .risk-list li { padding: 3mm 0; border-bottom: 1px solid var(--line); }
+    .risk-list strong { display: block; font-size: 9pt; margin-bottom: 1mm; }
+    .risk-list span { color: var(--muted); font-size: 8.5pt; }
+
+    .timeline { position: relative; margin-top: 8mm; padding-left: 8mm; border-left: 2px solid #b6e3d5; }
+    .timeline-item { position: relative; padding: 0 0 8mm 7mm; }
+    .timeline-item::before { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: var(--green); left: -13px; top: 4px; box-shadow: 0 0 0 4px var(--soft-green); }
+    .timeline-item .phase { color: var(--green-dark); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 8pt; }
+    .timeline-item h3 { margin: 1mm 0; font-size: 13pt; }
+
+    .closing { min-height: 225mm; display: flex; flex-direction: column; justify-content: space-between; }
+    .closing-hero { padding: 12mm; color: #fff; background: #111820; border-radius: 5mm; }
+    .closing-hero h2 { color: #fff; margin-bottom: 4mm; }
+    .closing-hero p { color: #b6c1cc; max-width: 142mm; font-size: 12pt; }
+    .disclaimer { padding: 6mm; border: 1px solid #d8dee5; background: #fff; border-radius: 3mm; color: #59636f; font-size: 8pt; line-height: 1.5; }
+    .contact-line { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid var(--line); padding-top: 5mm; color: #77808c; font-size: 8pt; }
+    .contact-line strong { color: var(--ink); font-size: 11pt; }
+
+    .avoid-break { page-break-inside: avoid; }
+    .no-margin { margin: 0; }
+    .mt-4 { margin-top: 4mm; }
+    .mt-8 { margin-top: 8mm; }
+    .accent { color: var(--green-dark); }
+    .muted { color: var(--muted); }
+    .nowrap { white-space: nowrap; }
+
+    /* Print-density pass: keeps every numbered chapter on one deliberate page. */
+    .page {
+      min-height: 0;
+      padding: 0;
+    }
+    .page h2 {
+      font-size: 25pt;
+      margin-bottom: 4mm;
+    }
+    .page h3 {
+      font-size: 15pt;
+      margin-bottom: 2mm;
+    }
+    .page .lede {
+      font-size: 11.5pt;
+      line-height: 1.43;
+      margin-bottom: 6mm;
+    }
+    .page .masthead {
+      padding-bottom: 4mm;
+      margin-bottom: 6mm;
+    }
+    .page .rule {
+      margin: 4mm 0;
+    }
+    .page .quote {
+      padding: 5mm 6mm;
+      margin: 5mm 0;
+      font-size: 15pt;
+    }
+    .page .metric-row {
+      margin: 5mm 0;
+      gap: 3mm;
+    }
+    .page .metric {
+      padding: 4mm;
+    }
+    .page .metric strong {
+      font-size: 19pt;
+    }
+    .page .toc-grid {
+      margin-top: 5mm;
+      gap: 2mm;
+    }
+    .page .toc-item {
+      width: calc(50% - 1mm);
+      padding: 2.7mm 0;
+      gap: 3mm;
+    }
+    .page .toc-num {
+      font-size: 13pt;
+    }
+    .page .principles {
+      margin-top: 8mm;
+      gap: 3mm;
+    }
+    .page .principle {
+      padding: 4mm;
+    }
+    .page .principle .number {
+      font-size: 16pt;
+    }
+    .page .split {
+      gap: 6mm;
+    }
+    .page .card,
+    .page .dark-card,
+    .page .green-card,
+    .page .blue-card,
+    .page .gold-card,
+    .page .violet-card {
+      padding: 5mm;
+    }
+    .page .flow {
+      gap: 2mm;
+      margin: 6mm 0;
+    }
+    .page .flow-step {
+      min-height: 31mm;
+      padding: 4mm;
+    }
+    .page .flow-step .step-num {
+      font-size: 15pt;
+    }
+    .page .three-baskets {
+      gap: 3mm;
+      margin-top: 5mm;
+    }
+    .page .basket-head {
+      margin-bottom: 3mm;
+    }
+    .page .logo-rail {
+      margin: 3mm 0;
+    }
+    .page .allocation {
+      margin-top: 3mm;
+    }
+    .page .allocation td {
+      padding: 2mm 0;
+    }
+    .page .future-strip {
+      margin-top: 4mm;
+      padding: 3mm 4mm;
+    }
+    .page .terminal,
+    .page .pair-console {
+      padding: 5mm;
+      margin-top: 5mm;
+    }
+    .page .terminal-box,
+    .page .pair-box {
+      padding: 4mm;
+    }
+    .page .terminal-box .amount {
+      font-size: 18pt;
+    }
+    .page .terminal-top {
+      padding-bottom: 3mm;
+      margin-bottom: 4mm;
+    }
+    .page .fee-line {
+      margin-top: 4mm;
+      padding-top: 3mm;
+    }
+    .page .rail {
+      gap: 3mm;
+      margin-top: 5mm;
+    }
+    .page .rail-step {
+      padding: 4mm;
+    }
+    .page .check-list li {
+      margin: 2mm 0;
+    }
+    .page .risk-list li {
+      padding: 2.3mm 0;
+    }
+    .page .timeline {
+      margin-top: 6mm;
+    }
+    .page .timeline-item {
+      padding-bottom: 5mm;
+    }
+    .page .closing {
+      min-height: 250mm;
+    }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div class="cover-inner">
+      <div class="brand-row">
+        <div class="brand"><img src="../public/assets/xindex-logo.png" alt="Xindex logo" style="filter: invert(1);" /> Xindex</div>
+        <div class="cover-meta">Concept paper / August 2026</div>
+      </div>
+
+      <div class="cover-body">
+        <div class="eyebrow">Tokenized exposure, composed once</div>
+        <h1>Hold &amp;<br />Pair As One</h1>
+        <p class="cover-lead">Xindex turns several tokenized stock exposures into one liquid basket asset, designed for a simpler wallet, a clearer product, and more useful liquidity.</p>
+        <div class="cover-callout">
+          <div class="callout-main">Deposit USDG.<br />Get one basket.<br />Hold, trade, pair.</div>
+          <div class="callout-side">A product-led path to composable market exposure on Robinhood Chain.</div>
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <div><strong>XINDEX WHITEPAPER</strong>Product architecture and launch thesis</div>
+        <div class="cover-signal"><span class="signal-dot"></span> Baskets are the product</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="masthead">
+      <div>
+        <div class="kicker">00 / Overview</div>
+        <h2>One idea.<br />Three products.</h2>
+      </div>
+      <div class="doc-id"><strong>Xindex</strong>Tokenized baskets<br />Concept paper / 2026</div>
+    </div>
+    <p class="lede">The market already offers individual tokenized stock exposures. Xindex proposes the missing product layer: a basket token that packages several exposures into one balance users can hold, trade, redeem, and use as a liquidity pair.</p>
+
+    <div class="quote">“The goal is not more tickers. The goal is <em>one useful asset</em> that represents a deliberate set of exposures.”</div>
+
+    <div class="metric-row">
+      <div class="metric"><strong>01</strong><span>basket balance from a USDG deposit</span></div>
+      <div class="metric"><strong>03</strong><span>initial products: AI, Mag7, gold</span></div>
+      <div class="metric"><strong>01</strong><span>asset to hold, trade, or pair</span></div>
+    </div>
+
+    <div class="rule"></div>
+    <h3>Contents</h3>
+    <div class="toc-grid">
+      <div class="toc-item"><span class="toc-num">01</span><div><strong class="toc-title">The thesis</strong><span class="toc-caption">Why basket tokens make tokenized exposure more useful</span></div></div>
+      <div class="toc-item"><span class="toc-num">02</span><div><strong class="toc-title">The basket model</strong><span class="toc-caption">How a set of references becomes one product</span></div></div>
+      <div class="toc-item"><span class="toc-num">03</span><div><strong class="toc-title">The first three</strong><span class="toc-caption">$AI7, $MAG7, and $GOLD</span></div></div>
+      <div class="toc-item"><span class="toc-num">04</span><div><strong class="toc-title">Mint &amp; redeem</strong><span class="toc-caption">A vault flow with explicit estimates</span></div></div>
+      <div class="toc-item"><span class="toc-num">05</span><div><strong class="toc-title">Pairing as a primitive</strong><span class="toc-caption">Why a basket is a better liquidity counterpart</span></div></div>
+      <div class="toc-item"><span class="toc-num">06</span><div><strong class="toc-title">Product before token</strong><span class="toc-caption">A fee engine that follows adoption</span></div></div>
+      <div class="toc-item"><span class="toc-num">07</span><div><strong class="toc-title">Canonical references</strong><span class="toc-caption">Contract discipline and user-facing clarity</span></div></div>
+      <div class="toc-item"><span class="toc-num">08</span><div><strong class="toc-title">Roadmap &amp; risks</strong><span class="toc-caption">A measured path from concept to protocol</span></div></div>
+    </div>
+
+  </section>
+
+  <section class="page">
+    <div class="kicker">01 / The thesis</div>
+    <h2>Less wallet<br />management. More product.</h2>
+    <p class="lede">Tokenized markets make individual exposures more portable. They do not automatically make a multi-asset strategy easier to use. If a user wants seven exposures, they still inherit seven balances, seven decisions, and seven possible liquidity paths.</p>
+
+    <div class="split">
+      <div class="main">
+        <div class="card avoid-break">
+          <h3>The wallet clutter problem</h3>
+          <p class="muted">A portfolio can be diversified in theory and still feel fragmented in practice. Separate tickers create operational friction at every step: acquiring exposure, monitoring it, moving it, pairing it, and exiting it.</p>
+          <div class="flow">
+            <div class="flow-step"><span class="step-num">01</span><strong>Many references</strong><span>Several tokenized stocks represent the exposure a user wants.</span></div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-step"><span class="step-num">02</span><strong>Many balances</strong><span>Each ticker becomes another position to manage and explain.</span></div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-step"><span class="step-num">03</span><strong>One answer</strong><span>A basket token composes the set into a single product.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="dark-card">
+          <div class="kicker" style="color:#64dfb8;">The Xindex answer</div>
+          <h3>One liquid basket token.</h3>
+          <p style="color:#b6c1cc;">Deposit USDG and receive a token that represents a defined basket. Hold it as one position, trade it as one asset, or use it as one side of a liquidity pair.</p>
+          <div class="rule-dark"></div>
+          <p class="small" style="color:#8e9aa8;">Example</p>
+          <p style="font-size:15pt;font-weight:700;margin-bottom:0;">$AI7 = NVDA + AVGO + TSM + AMD</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="green-card mt-8 avoid-break">
+      <h3 class="no-margin">The product thesis</h3>
+      <p class="no-margin mt-4">The value is not only in the underlying references. It is in the packaging: a fixed, legible composition that can move through a wallet, a vault, or a liquidity pool without asking the user to recreate the same allocation every time.</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">02 / The basket model</div>
+    <h2>Compose once.<br />Use everywhere.</h2>
+    <p class="lede">A basket is a product with a defined composition, a mint/redeem path, and a market role. It is not a promise that every underlying asset behaves the same way, nor a replacement for understanding the references inside it.</p>
+
+    <div class="flow">
+      <div class="flow-step"><span class="step-num">01</span><strong>Reference catalogue</strong><span>Start with canonical Robinhood Stock Token references and a published composition.</span></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><span class="step-num">02</span><strong>Basket definition</strong><span>Express the intended exposure as one named product with transparent weights.</span></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><span class="step-num">03</span><strong>Vault interface</strong><span>Let users simulate or execute a deposit, mint, redeem, and fee path.</span></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><span class="step-num">04</span><strong>Liquidity role</strong><span>Use the basket as an asset that other projects can pair against.</span></div>
+    </div>
+
+    <div class="split mt-8">
+      <div class="main">
+        <div class="card">
+          <h3>What a basket standardizes</h3>
+          <table class="allocation">
+            <thead><tr><th>Layer</th><th>What is defined</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Identity</strong></td><td class="muted">Name, symbol, and product purpose</td></tr>
+              <tr><td><strong>Composition</strong></td><td class="muted">Underlying references and target weights</td></tr>
+              <tr><td><strong>Conversion</strong></td><td class="muted">Deposit and redemption relationship</td></tr>
+              <tr><td><strong>Market role</strong></td><td class="muted">An asset that can be held, traded, or paired</td></tr>
+              <tr><td><strong>Disclosure</strong></td><td class="muted">Estimates, execution limits, and risks shown plainly</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="side">
+        <div class="blue-card">
+          <h4>Design rule</h4>
+          <h3>Make the wrapper legible.</h3>
+          <p class="small no-margin">A user should understand what a basket contains before deciding whether to hold it. A project should understand what it is pairing against before bootstrapping liquidity.</p>
+        </div>
+        <div class="gold-card mt-4">
+          <h4>Important distinction</h4>
+          <p class="small no-margin">Reference prices and weights describe the product. They are not a guarantee of execution price, liquidity, or future performance.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="page">
+    <div class="kicker">03 / The first three</div>
+    <h2>Start narrow.<br />Earn the right to expand.</h2>
+    <p class="lede">Xindex begins with three focused basket products. The initial catalogue is intentionally small: each product should be easy to identify, easy to simulate, and easy to use in a market.</p>
+
+    <div class="three-baskets">
+      <div class="blue-card avoid-break">
+        <div class="basket-head"><div><span class="basket-symbol blue">$AI7</span></div><div class="basket-name">AI Compute</div></div>
+        <p class="basket-sub">A focused basket for the AI hardware stack.</p>
+        <div class="logo-rail">
+          <span><img src="../public/assets/stock-logos/nvidia.svg" alt="NVIDIA" /></span>
+          <span><img src="../public/assets/stock-logos/broadcom.svg" alt="Broadcom" /></span>
+          <span><img src="../public/assets/stock-logos/tsmc.svg" alt="TSMC" /></span>
+          <span><img src="../public/assets/stock-logos/amd.svg" alt="AMD" /></span>
+        </div>
+        <table class="allocation">
+          <tbody>
+            <tr><td>NVIDIA / NVDA</td><td class="weight">35%</td></tr>
+            <tr><td>Broadcom / AVGO</td><td class="weight">25%</td></tr>
+            <tr><td>TSMC / TSM</td><td class="weight">25%</td></tr>
+            <tr><td>AMD / AMD</td><td class="weight">15%</td></tr>
+          </tbody>
+        </table>
+        <p class="tiny mt-4">Illustrative composition shown for the product concept.</p>
+      </div>
+
+      <div class="green-card avoid-break">
+        <div class="basket-head"><div><span class="basket-symbol">$MAG7</span></div><div class="basket-name">Magnificent Seven</div></div>
+        <p class="basket-sub">Seven mega-cap technology leaders in one balanced basket.</p>
+        <div class="logo-rail">
+          <span><img src="../public/assets/stock-logos/apple.svg" alt="Apple" /></span>
+          <span><img src="../public/assets/stock-logos/google.svg" alt="Alphabet" /></span>
+          <span><img src="../public/assets/stock-logos/meta.svg" alt="Meta" /></span>
+          <span><img src="../public/assets/stock-logos/nvidia.svg" alt="NVIDIA" /></span>
+          <span><img src="../public/assets/stock-logos/tesla.svg" alt="Tesla" /></span>
+        </div>
+        <table class="allocation">
+          <tbody>
+            <tr><td>Apple / AAPL</td><td class="weight">14.3%</td></tr>
+            <tr><td>Microsoft / MSFT</td><td class="weight">14.3%</td></tr>
+            <tr><td>Alphabet / GOOGL</td><td class="weight">14.3%</td></tr>
+            <tr><td>Amazon, NVIDIA, Meta, Tesla</td><td class="weight">57.1%</td></tr>
+          </tbody>
+        </table>
+        <p class="tiny mt-4">Illustrative equal-weighted concept; final product parameters may change.</p>
+      </div>
+
+      <div class="gold-card avoid-break">
+        <div class="basket-head"><div><span class="basket-symbol gold">$GOLD</span></div><div class="basket-name">Gold-Linked</div></div>
+        <p class="basket-sub">Gold-linked exposure through a verified reference in the catalogue.</p>
+        <div style="height:10mm;display:flex;align-items:center;justify-content:center;font-family:'Geist Pixel Circle',monospace;font-size:24pt;color:#9b6507;">GOLD</div>
+        <table class="allocation">
+          <tbody>
+            <tr><td>Gold-linked Robinhood contract</td><td class="weight">100%</td></tr>
+          </tbody>
+        </table>
+        <p class="tiny mt-4">Gold-linked exposure is not described as physical reserve backing.</p>
+      </div>
+    </div>
+
+    <div class="future-strip"><strong>Future catalogue:</strong> additional concepts may be explored later. They are not part of the initial three basket products.</div>
+
+    <div class="rule"></div>
+    <div class="split">
+      <div class="main"><h3>Why only three?</h3><p class="muted">A smaller catalogue makes the first user experience easier to explain and gives liquidity efforts a clear starting point. Expansion should follow demand, usage, and the quality of the underlying references.</p></div>
+      <div class="side"><div class="card"><h4>Product test</h4><p class="small no-margin">Can a new user name the basket, describe what it holds, and understand what they can do with it in one sentence?</p></div></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">04 / Mint &amp; redeem</div>
+    <h2>The vault is<br />the conversion layer.</h2>
+    <p class="lede">The vault turns a USDG deposit into a basket balance and gives a holder a path back out. The interface should make the allocation, estimate, fee, and simulation status visible before action.</p>
+
+    <div class="terminal avoid-break">
+      <div class="terminal-top"><span class="terminal-label">Xindex vault / conversion path</span><span class="terminal-status">Simulation mode</span></div>
+      <div class="terminal-flow">
+        <div class="terminal-box"><span class="unit">Input</span><div class="amount">1,000</div><span class="unit">USDG deposit</span></div>
+        <div class="terminal-arrow">&rarr;</div>
+        <div class="terminal-box"><span class="unit">Output</span><div class="amount">4.0775</div><span class="unit">$AI7 basket units</span></div>
+      </div>
+      <div class="fee-line"><span>Illustrative protocol fee</span><strong>1.00 USDG</strong><span>Net amount and basket units are estimates</span></div>
+    </div>
+
+    <div class="split mt-8">
+      <div class="main">
+        <div class="card">
+          <h3>Mint flow</h3>
+          <ol class="check-list">
+            <li><strong>Choose a basket.</strong> Select one of the initial products and review its composition.</li>
+            <li><strong>Enter a USDG amount.</strong> The interface shows the fee and an estimated basket output.</li>
+            <li><strong>Review before action.</strong> The user sees the reference value, target weights, and simulation disclosure.</li>
+            <li><strong>Receive the basket.</strong> In a live implementation, the vault would execute against the approved contract path.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="side">
+        <div class="violet-card">
+          <h4>Redeem flow</h4>
+          <p class="small">Select a basket amount, review the estimated USDG output and fee, then confirm the redemption path.</p>
+          <div class="rule"></div>
+          <p class="small no-margin"><strong>Same principle:</strong> show the conversion before the user commits.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gold-card mt-8">
+      <h3 class="no-margin">Estimate is not execution</h3>
+      <p class="no-margin mt-4">Reference values, displayed fees, and calculated outputs are illustrative until a live transaction is configured and executed. Market movement, liquidity, contract state, network conditions, and implementation details can change the final result.</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">05 / Pairing as a primitive</div>
+    <h2>Launch against<br />a basket, not a single stock.</h2>
+    <p class="lede">A project token does not have to anchor its liquidity to one stock exposure. By pairing against a basket, the project gives its market one diversified reference asset and one balance to understand.</p>
+
+    <div class="pair-console avoid-break">
+      <div class="terminal-top"><span class="terminal-label">Robinhood Chain / pairing console</span><span class="terminal-status">Illustrative market structure</span></div>
+      <div class="pair-visual">
+        <div class="pair-box"><div class="token">$AGI_COIN</div><p class="small" style="color:#aeb9c5;margin:2mm 0 0;">New project token</p></div>
+        <div class="pair-link"><strong>+</strong>liquidity pair<br />against one basket</div>
+        <div class="pair-box accent"><div class="token">$AI7</div><p class="small" style="color:#b6e3d5;margin:2mm 0 0;">AI Compute Basket</p></div>
+      </div>
+      <div class="fee-line"><span>Underlying exposure</span><strong>NVDA / AVGO / TSM / AMD</strong><span>Example only</span></div>
+    </div>
+
+    <div class="split mt-8">
+      <div class="main">
+        <div class="card">
+          <h3>Why the pair matters</h3>
+          <p class="muted">The quote asset shapes how a market is perceived. A project paired against one stock inherits a narrow reference. A project paired against $AI7 can reference an AI hardware basket with a defined composition and one tradable balance.</p>
+          <div class="metric-row">
+            <div class="metric"><strong>01</strong><span>quote asset to explain</span></div>
+            <div class="metric"><strong>04</strong><span>AI references inside $AI7</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="blue-card">
+          <h4>Market design</h4>
+          <h3>Composability is the point.</h3>
+          <p class="small no-margin">A basket is useful when another product can build around it without reproducing the underlying allocation from scratch.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote">“One basket gives a project a <em>single liquidity counterpart</em> for a diversified exposure.”</div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">06 / Product before token</div>
+    <h2>The token is<br />the fee engine.</h2>
+    <p class="lede">Xindex does not lead with a token launch. It leads with products people can understand and use. If basket demand, vault activity, and liquidity pairs develop, a future project token can be introduced around the economic activity those products create.</p>
+
+    <div class="rail">
+      <div class="rail-step"><h4>01 / Product layer</h4><strong>Baskets are the product.</strong><p class="small no-margin">Build assets people genuinely want to hold, trade, and pair.</p></div>
+      <div class="rail-step"><h4>02 / Revenue rail</h4><strong>Fees follow usage.</strong><p class="small no-margin">Mint, redeem, and future basket listing activity can support a transparent fee model.</p></div>
+      <div class="rail-step"><h4>03 / Future token</h4><strong>Utility comes later.</strong><p class="small no-margin">A token can be tied to protocol fees and governance after the product foundation exists.</p></div>
+    </div>
+
+    <div class="split mt-8">
+      <div class="main">
+        <div class="dark-card">
+          <div class="kicker" style="color:#64dfb8;">The sequencing principle</div>
+          <h3>Do not launch the token first.</h3>
+          <p style="color:#b6c1cc;">A token should not have to manufacture the reason the protocol exists. The baskets establish that reason. Adoption, useful liquidity, and vault volume provide the context for later utility.</p>
+          <div class="rule-dark"></div>
+          <p class="small" style="color:#8e9aa8;margin-bottom:2mm;">Illustrative fee model</p>
+          <p style="font-family:'Geist Pixel Circle',monospace;font-size:25pt;margin:0;color:#f3ba4e;">0.10%</p>
+        </div>
+      </div>
+      <div class="side">
+        <div class="green-card">
+          <h4>What fees can support</h4>
+          <ul class="check-list">
+            <li>Protocol operations and maintenance</li>
+            <li>Basket listing and configuration work</li>
+            <li>Future governance and token utility</li>
+          </ul>
+          <p class="tiny mt-4">The exact model is subject to implementation, governance, and applicable requirements.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote">“Product-market fit starts with assets people want to <em>hold and pair against</em>.”</div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">07 / Canonical references</div>
+    <h2>Trust starts<br />with the reference.</h2>
+    <p class="lede">A basket product is only as understandable as the references beneath it. Xindex is designed around canonical Robinhood Stock Token references, explicit weights, and a clear distinction between a reference catalogue and executable liquidity.</p>
+
+    <div class="split">
+      <div class="main">
+        <div class="card">
+          <h3>Reference discipline</h3>
+          <table class="allocation">
+            <thead><tr><th>Principle</th><th>Meaning for users</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Canonical references</strong></td><td class="muted">Basket components should point to the intended official catalogue entries, not lookalike proxies.</td></tr>
+              <tr><td><strong>Visible composition</strong></td><td class="muted">Weights and underlying names should be inspectable before a user chooses a basket.</td></tr>
+              <tr><td><strong>Reference price clarity</strong></td><td class="muted">Displayed values are reference estimates; they do not guarantee execution.</td></tr>
+              <tr><td><strong>Separate liquidity proof</strong></td><td class="muted">A listed reference and an executable market are related but distinct questions.</td></tr>
+              <tr><td><strong>Non-custodial intent</strong></td><td class="muted">The vault should not imply that Xindex takes custody of user assets.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="side">
+        <div class="dark-card">
+          <div class="kicker" style="color:#64dfb8;">A simple contract map</div>
+          <p style="font-size:14pt;font-weight:700;">Reference<br />&darr;<br />Basket definition<br />&darr;<br />Vault / market</p>
+          <p class="small" style="color:#8e9aa8;margin-bottom:0;">Each layer has a different job. The interface should not collapse them into one vague claim.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-row mt-8">
+      <div class="metric"><strong>01</strong><span>canonical reference layer</span></div>
+      <div class="metric"><strong>01</strong><span>published basket definition</span></div>
+      <div class="metric"><strong>01</strong><span>clear estimate-to-execution boundary</span></div>
+    </div>
+
+    <div class="green-card mt-8">
+      <h3 class="no-margin">What this does not mean</h3>
+      <p class="no-margin mt-4">A tokenized stock reference is not the same as owning the underlying company share. It may provide economic exposure under the terms of its own instrument, without share ownership or voting rights. Users must review the applicable terms and restrictions.</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">08 / Roadmap &amp; risks</div>
+    <h2>Build in public.<br />Ship in stages.</h2>
+    <p class="lede">The sequence matters. Xindex should move from a clear product concept to verified implementation without letting the language of a prototype outrun the reality of the system.</p>
+
+    <div class="timeline">
+      <div class="timeline-item"><span class="phase">Phase 01 / Product clarity</span><h3>Define the initial catalogue</h3><p class="small no-margin">Finalize the basket names, intended compositions, reference entries, user flows, and disclosure language for $AI7, $MAG7, and $GOLD.</p></div>
+      <div class="timeline-item"><span class="phase">Phase 02 / Contract readiness</span><h3>Verify the conversion path</h3><p class="small no-margin">Implement and review the non-custodial vault path, pricing/reference boundaries, mint/redeem behavior, and fee accounting.</p></div>
+      <div class="timeline-item"><span class="phase">Phase 03 / Market utility</span><h3>Prove the pairing use case</h3><p class="small no-margin">Establish basket liquidity and demonstrate why new projects can use a basket as a practical counterpart.</p></div>
+      <div class="timeline-item"><span class="phase">Phase 04 / Future utility</span><h3>Evaluate token economics</h3><p class="small no-margin">Only after product usage exists: assess a future fee-engine and governance token with a clear purpose.</p></div>
+    </div>
+
+    <div style="page-break-before:always;padding-top:1mm;">
+      <div class="kicker">08B / Risk register</div>
+      <h2>Know the limits.<br />Design around them.</h2>
+      <p class="lede">A useful basket interface makes risk easier to inspect; it does not make risk disappear. The protocol path and public language should remain explicit about what can change.</p>
+    </div>
+    <div class="split">
+      <div class="main">
+        <div class="card">
+          <h3>Risks to understand</h3>
+          <ul class="risk-list">
+            <li><strong>Underlying exposure risk</strong><span>Basket diversification does not remove price movement or concentration risk inside a composition.</span></li>
+            <li><strong>Liquidity and execution risk</strong><span>Reference values may not equal the price available in a live market or redemption path.</span></li>
+            <li><strong>Contract and oracle risk</strong><span>Software, reference data, and external dependencies can fail or behave unexpectedly.</span></li>
+            <li><strong>Instrument and jurisdiction risk</strong><span>Tokenized references may have eligibility, transfer, geographic, or legal restrictions.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="side">
+        <div class="gold-card">
+          <h4>Prototype boundary</h4>
+          <p class="small no-margin">The current Xindex experience is frontend-only and includes simulated interactions. It is not a connected wallet, a live order router, or a completed on-chain protocol.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="closing">
+      <div>
+        <div class="kicker">09 / Closing note</div>
+        <div class="closing-hero">
+          <h2>One basket.<br />More ways to use it.</h2>
+          <p>Xindex starts with a simple product promise: make several tokenized stock exposures easier to hold, trade, and pair by composing them into one clear basket asset.</p>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric"><strong>$AI7</strong><span>AI compute basket</span></div>
+          <div class="metric"><strong>$MAG7</strong><span>mega-cap technology basket</span></div>
+          <div class="metric"><strong>$GOLD</strong><span>gold-linked basket</span></div>
+        </div>
+
+        <div class="disclaimer">
+          <strong>Important disclosure.</strong> This concept paper is for informational purposes only and does not constitute financial, investment, legal, tax, or regulatory advice. It describes a product concept and a frontend simulation, not a live offer, solicitation, transaction, or guarantee. Basket compositions, weights, fees, reference values, availability, contract addresses, execution paths, and roadmap items may change. Tokenized stock references may provide economic exposure without share ownership or voting rights and may be subject to terms, restrictions, and jurisdictional limitations. Users should conduct their own review and consult qualified professionals before making decisions.
+        </div>
+      </div>
+
+      <div class="contact-line">
+        <div><strong>Xindex</strong><br />Tokenized baskets on Robinhood Chain</div>
+        <div style="text-align:right;">Concept paper<br />August 2026</div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
