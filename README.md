@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="artifacts/xindex/public/assets/xindex-logo.png" alt="Xindex logo" width="96" />
+  <img src="xindex/public/assets/xindex-logo.png" alt="Xindex logo" width="96" />
   <h1>Xindex</h1>
   <p><strong>Build the index. Own the narrative.</strong></p>
   <p>Tokenized stock-basket infrastructure for Robinhood Chain.</p>
@@ -16,17 +16,17 @@
 <br />
 
 <div align="center">
-  <img src="artifacts/xindex/public/assets/stock-logos/nvidia.svg" alt="NVIDIA" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/broadcom.svg" alt="Broadcom" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/tsmc.svg" alt="TSMC" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/amd.svg" alt="AMD" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/apple.svg" alt="Apple" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/microsoft.svg" alt="Microsoft" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/google.svg" alt="Alphabet" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/amazon.svg" alt="Amazon" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/meta.svg" alt="Meta" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/tesla.svg" alt="Tesla" width="38" height="38" />
-  <img src="artifacts/xindex/public/assets/stock-logos/gold.svg" alt="Gold" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/nvidia.svg" alt="NVIDIA" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/broadcom.svg" alt="Broadcom" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/tsmc.svg" alt="TSMC" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/amd.svg" alt="AMD" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/apple.svg" alt="Apple" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/microsoft.svg" alt="Microsoft" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/google.svg" alt="Alphabet" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/amazon.svg" alt="Amazon" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/meta.svg" alt="Meta" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/tesla.svg" alt="Tesla" width="38" height="38" />
+  <img src="xindex/public/assets/stock-logos/gold.svg" alt="Gold" width="38" height="38" />
 </div>
 
 > **Status:** Xindex is an actively developed protocol prototype. The current web app is a read-only product workspace: it can inspect live reference data and connected-wallet balances, but basket minting, redemption, USDG routing, and production vault execution are not enabled yet.
