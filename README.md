@@ -91,10 +91,10 @@ Xindex currently tracks a pinned registry of canonical Robinhood Stock Token ref
 
 |  | Symbol |  | Symbol |  | Symbol |
 | --- | --- | --- | --- | --- | --- |
-| <img src="xindex/public/assets/stock-logos/nvidia.svg" alt="NVIDIA" width="28" /> | **NVDA** | <img src="artifacts/xindex/public/assets/stock-logos/broadcom.svg" alt="Broadcom" width="28" /> | **AVGO** | <img src="artifacts/xindex/public/assets/stock-logos/tsmc.svg" alt="TSMC" width="28" /> | **TSM** |
-| <img src="xindex/public/assets/stock-logos/amd.svg" alt="AMD" width="28" /> | **AMD** | <img src="artifacts/xindex/public/assets/stock-logos/apple.svg" alt="Apple" width="28" /> | **AAPL** | <img src="artifacts/xindex/public/assets/stock-logos/microsoft.svg" alt="Microsoft" width="28" /> | **MSFT** |
-| <img src="xindex/public/assets/stock-logos/google.svg" alt="Alphabet" width="28" /> | **GOOGL** | <img src="xindex/public/assets/stock-logos/amazon.svg" alt="Amazon" width="28" /> | **AMZN** | <img src="xindex/public/assets/stock-logos/meta.svg" alt="Meta" width="28" /> | **META** |
-| <img src="xindex/public/assets/stock-logos/tesla.svg" alt="Tesla" width="28" /> | **TSLA** | <img src="artifacts/xindex/public/assets/stock-logos/gold.svg" alt="Gold" width="28" /> | **GLD** |  |  |
+| <img src="xindex/public/assets/stock-logos/nvidia.svg" alt="NVIDIA" width="28" /> | **NVDA** | <img src="xindex/public/assets/stock-logos/broadcom.svg" alt="Broadcom" width="28" /> | **AVGO** | <img src="xindex/public/assets/stock-logos/tsmc.svg" alt="TSMC" width="28" /> | **TSM** |
+| <img src="xindex/public/assets/stock-logos/amd.svg" alt="AMD" width="28" /> | **AMD** | <img src="xindex/public/assets/stock-logos/apple.svg" alt="Apple" width="28" /> | **AAPL** | <img src="artifacts/xindex/public/assets/stock-logos/microsoft.svg" alt="Microsoft" width="28" /> | **MSFT** |
+| <img src="xindex/public/assets/stock-logos/google.svg" alt="Alphabet" width="28" /> | **GOOGL** | <img src="public/assets/stock-logos/amazon.svg" alt="Amazon" width="28" /> | **AMZN** | <img src="xindex/public/assets/stock-logos/meta.svg" alt="Meta" width="28" /> | **META** |
+| <img src="xindex/public/assets/stock-logos/tesla.svg" alt="Tesla" width="28" /> | **TSLA** | <img src="xindex/public/assets/stock-logos/gold.svg" alt="Gold" width="28" /> | **GLD** |  |  |
 
 </div>
 
